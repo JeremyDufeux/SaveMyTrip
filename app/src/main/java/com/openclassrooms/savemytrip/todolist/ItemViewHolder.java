@@ -8,6 +8,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.R;
 
@@ -21,8 +24,12 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     TextView mTextView;
     @BindView(R.id.activity_todo_list_item_image)
     ImageView mImageView;
+    @BindView(R.id.activity_todo_list_item_picture)
+    ImageView mPictureView;
     @BindView(R.id.activity_todo_list_item_remove)
     ImageButton mImageButton;
+    @BindView(R.id.activity_todo_list_item_share)
+    ImageButton mShareButton;
 
     private WeakReference<ItemAdapter.Listener> callbackRef;
 
@@ -31,10 +38,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         ButterKnife.bind(this, itemView);
     }
 
-    public void updateWithItem(Item item, ItemAdapter.Listener callback){
+    public void updateWithItem(Item item, ItemAdapter.Listener callback, RequestManager glide){
         callbackRef = new WeakReference<ItemAdapter.Listener>(callback);
         mTextView.setText(item.getText());
         mImageButton.setOnClickListener(this);
+        mShareButton.setOnClickListener(this);
         switch (item.getCategory()){
             case 0: // To visit
                 mImageView.setBackgroundResource(R.drawable.ic_room_black_24px);
@@ -46,6 +54,13 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
                 mImageView.setBackgroundResource(R.drawable.ic_local_cafe_black_24px);
                 break;
         }
+
+        if(item.getPictureUri()!=null) {
+            mPictureView.setVisibility(View.VISIBLE);
+            mShareButton.setVisibility(View.VISIBLE);
+            glide.load(item.getPictureUri()).apply(RequestOptions.circleCropTransform()).into(mPictureView);
+        }
+
         if(item.isSelected()){
             mTextView.setPaintFlags(mTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
@@ -56,6 +71,13 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public void onClick(View v) {
         ItemAdapter.Listener callback = callbackRef.get();
-        if(callback!=null) callback.onClickDeleteButton(getAdapterPosition());
+        switch (v.getId()){
+            case R.id.activity_todo_list_item_remove:
+                if(callback!=null) callback.onClickDeleteButton(getAdapterPosition());
+                break;
+            case R.id.activity_todo_list_item_share:
+                if(callback!=null) callback.onClickShareButton(getAdapterPosition());
+                break;
+        }
     }
 }

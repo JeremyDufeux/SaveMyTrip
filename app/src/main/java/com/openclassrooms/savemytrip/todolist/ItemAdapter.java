@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.RequestManager;
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.R;
 
@@ -17,13 +18,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
     public interface Listener {
         void onClickDeleteButton(int position);
+        void onClickShareButton(int position);
     }
     private final Listener callback;
+    private RequestManager glide;
 
     private List<Item> items;
 
-    public ItemAdapter(Listener callback) {
+    public ItemAdapter(Listener callback, RequestManager glide) {
         this.callback = callback;
+        this.glide = glide;
         items = new ArrayList<>();
     }
 
@@ -38,7 +42,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder itemViewHolder, int i) {
-        itemViewHolder.updateWithItem(items.get(i), callback);
+        itemViewHolder.updateWithItem(items.get(i), callback, glide);
     }
 
     @Override

@@ -9,6 +9,7 @@ public class Item {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String text;
+    private String pictureUri;
     private int category;
     private boolean isSelected;
     private long userId;
@@ -19,6 +20,14 @@ public class Item {
         this.text = text;
         this.category = category;
         this.userId = userId;
+    }
+
+    public String getPictureUri() {
+        return pictureUri;
+    }
+
+    public void setPictureUri(String pictureUri) {
+        this.pictureUri = pictureUri;
     }
 
     public long getId() {
