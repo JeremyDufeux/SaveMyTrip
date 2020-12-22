@@ -1,8 +1,11 @@
 package com.openclassrooms.savemytrip.tripbook;
 
 
+import android.Manifest;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +22,8 @@ import com.openclassrooms.savemytrip.utils.StorageUtils;
 
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class TripBookActivity extends BaseActivity {
 
@@ -33,6 +38,8 @@ public class TripBookActivity extends BaseActivity {
     // File purposes
     private static final String FILE_NAME = "tripBook.txt";
     private static final String FOLDER_NAME = "booktrip";
+
+    private static final int RC_STORAGE_WRITE_PERMS = 100;
 
     @Override
     public int getLayoutContentViewID() { return R.layout.activity_trip_book; }
@@ -49,6 +56,12 @@ public class TripBookActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override
@@ -72,6 +85,7 @@ public class TripBookActivity extends BaseActivity {
                        R.id.trip_book_activity_radio_private, R.id.trip_book_activity_radio_public,
                        R.id.trip_book_activity_radio_normal, R.id.trip_book_activity_radio_volatile})
     public void onClickRadioButton(CompoundButton button, boolean isChecked){
+        Log.d("Debug", "onClickRadioButton");
         if (isChecked) {
             switch (button.getId()) {
                 case R.id.trip_book_activity_radio_internal:
@@ -91,7 +105,7 @@ public class TripBookActivity extends BaseActivity {
         if(radioButtonExternalChoice.isChecked()){
             writeOnExternalStorage();
         } else {
-            // TODO Internal
+            writeOnInternalStorage();
         }
     }
 
@@ -99,7 +113,13 @@ public class TripBookActivity extends BaseActivity {
     // Utils - Storage
     // --------------------
 
+    @AfterPermissionGranted(RC_STORAGE_WRITE_PERMS)
     private void readFromStorage(){
+        Log.d("Debug", "readFromStorage");
+        if (!EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.title_permission), RC_STORAGE_WRITE_PERMS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            return;
+        }
         if (radioButtonExternalChoice.isChecked()){
             if(StorageUtils.isExternalStorageReadable()){
                 // External
@@ -111,11 +131,16 @@ public class TripBookActivity extends BaseActivity {
                 }
             }
         } else {
-            // TODO Internal
+            if(radioButtonInternalVolatileChoice.isChecked()){
+                editText.setText(StorageUtils.getTextFromStorage(getCacheDir(), this, FILE_NAME, FOLDER_NAME));
+            } else {
+                editText.setText(StorageUtils.getTextFromStorage(getFilesDir(), this, FILE_NAME, FOLDER_NAME));
+            }
         }
     }
 
     private void writeOnExternalStorage(){
+        Log.d("Debug", "writeOnExternalStorage");
         if(StorageUtils.isExternalStorageWritable()){
             if(radioButtonExternalPublicChoice.isChecked()){
                 StorageUtils.setTextInStorage(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), this, FILE_NAME, FOLDER_NAME, editText.getText().toString());
@@ -124,6 +149,15 @@ public class TripBookActivity extends BaseActivity {
             }
         } else {
             Toast.makeText(this, getString(R.string.external_storage_impossible_create_file), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void writeOnInternalStorage() {
+        if(radioButtonInternalVolatileChoice.isChecked()){
+            StorageUtils.setTextInStorage(getCacheDir(), this, FILE_NAME, FOLDER_NAME, editText.getText().toString());
+        } else {
+            StorageUtils.setTextInStorage(getFilesDir(), this, FILE_NAME, FOLDER_NAME, editText.getText().toString());
         }
     }
 }
