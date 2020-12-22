@@ -9,8 +9,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.openclassrooms.savemytrip.Models.Item;
-import com.openclassrooms.savemytrip.Models.User;
+import com.openclassrooms.savemytrip.models.Item;
+import com.openclassrooms.savemytrip.models.User;
 import com.openclassrooms.savemytrip.database.dao.ItemDao;
 import com.openclassrooms.savemytrip.database.dao.UserDao;
 

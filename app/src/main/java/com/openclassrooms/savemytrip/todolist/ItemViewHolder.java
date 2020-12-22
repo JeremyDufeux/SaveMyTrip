@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.openclassrooms.savemytrip.Models.Item;
+import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.R;
 
 import java.lang.ref.WeakReference;

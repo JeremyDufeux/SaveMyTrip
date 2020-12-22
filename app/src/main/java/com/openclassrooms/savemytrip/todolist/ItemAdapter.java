@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.openclassrooms.savemytrip.Models.Item;
+import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.R;
 
 import java.util.ArrayList;

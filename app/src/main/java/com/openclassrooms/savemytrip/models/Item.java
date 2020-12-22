@@ -1,4 +1,4 @@
-package com.openclassrooms.savemytrip.Models;
+package com.openclassrooms.savemytrip.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;

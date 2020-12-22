@@ -5,8 +5,8 @@ import android.arch.persistence.room.Room;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.openclassrooms.savemytrip.Models.Item;
-import com.openclassrooms.savemytrip.Models.User;
+import com.openclassrooms.savemytrip.models.Item;
+import com.openclassrooms.savemytrip.models.User;
 import com.openclassrooms.savemytrip.database.SaveMyTripDatabase;
 
 import org.junit.After;
@@ -15,7 +15,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
