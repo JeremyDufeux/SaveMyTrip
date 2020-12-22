@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.openclassrooms.savemytrip">
     
     <uses-permission android:name="android.permission.INTERNET" />
@@ -35,6 +36,17 @@
             android:name=".todolist.TodoListActivity"
             android:label="@string/title_todo_list"
             android:parentActivityName=".MainActivity"/>
+
+        <!-- FileProvider -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.openclassrooms.savemytrip.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
 
     </application>
 

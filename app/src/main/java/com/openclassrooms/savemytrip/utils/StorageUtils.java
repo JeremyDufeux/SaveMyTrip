@@ -32,6 +32,10 @@ public class StorageUtils {
         writeOnFile(context, text, file);
     }
 
+    public static File getFileFromStorage(File rootDestination, Context context, String fileName, String folderName){
+        return createOrGetFile(rootDestination, fileName, folderName);
+    }
+
     // ----------------------------
     //  External Storage
     // ----------------------------
