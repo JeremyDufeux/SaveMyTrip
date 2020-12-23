@@ -22,8 +22,8 @@ public class ItemDataRepository {
         this.itemDao.insertItem(item);
     }
 
-    public void updateItem(Item item){
-        this.itemDao.updateItem(item);
+    public void updateItemSelection(long itemId, boolean selection){
+        this.itemDao.updateItemSelection(itemId, selection);
     }
 
     public void deleteItem(long itemId){

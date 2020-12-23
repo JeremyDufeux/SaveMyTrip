@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +22,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     public interface Listener {
         void onClickDeleteButton(int position);
         void onClickShareButton(int position);
+        void onClickItem(int position);
     }
-    private final Listener callback;
-    private final RequestManager glide;
+    private Listener callback;
+    private RequestManager glide;
 
     AsyncListDiffer<Item> differ;
 
@@ -66,7 +68,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         }
 
         public boolean areContentsTheSame(Item oldItem, @NonNull Item newItem) {
-            return oldItem.getText().equals(newItem.getText());
+            return oldItem.isSelected() == newItem.isSelected();
         }
     }
 

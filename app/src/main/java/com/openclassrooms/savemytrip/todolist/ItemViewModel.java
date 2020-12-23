@@ -55,8 +55,8 @@ public class ItemViewModel extends ViewModel {
     public void createItem(Item item){
         executor.execute(() -> itemDataSource.createItem(item));
     }
-    public void updateItem(Item item){
-        executor.execute(() -> itemDataSource.updateItem(item));
+    public void updateItemSelection(long itemId, boolean selection){
+        executor.execute(() -> itemDataSource.updateItemSelection(itemId, selection));
     }
     public void deleteItem(long userId){
         executor.execute(() -> itemDataSource.deleteItem(userId));

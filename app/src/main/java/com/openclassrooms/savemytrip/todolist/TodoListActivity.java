@@ -11,6 +11,7 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -106,6 +107,12 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
         sharePicture(this.itemAdapter.getItem(position));
     }
 
+    @Override
+    public void onClickItem(int position) { // TODO
+        Log.d("Debug", "onClickItem:  : " );
+        updateItem(itemAdapter.getItem(position));
+    }
+
     @AfterPermissionGranted(RC_STORAGE_READ_PERMS)
     private void loadPicture(){
         if (!EasyPermissions.hasPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -157,8 +164,7 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     }
 
     private void updateItem(Item item){
-        item.setSelected(!item.isSelected());
-        this.itemViewModel.updateItem(item);
+        this.itemViewModel.updateItemSelection(item.getId(), !item.isSelected());
     }
 
     private void deleteItem(Item item){
@@ -173,9 +179,6 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
         itemAdapter = new ItemAdapter(this, Glide.with(this));
         recyclerView.setAdapter(itemAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ItemClickSupport.addTo(recyclerView, R.layout.activity_todo_list_item)
-                .setOnItemClickListener((recyclerView, position, v)
-                        -> updateItem(itemAdapter.getItem(position)));
     }
 
     private void updateHeader(User user){

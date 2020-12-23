@@ -19,8 +19,8 @@ public interface ItemDao {
     @Insert
     long insertItem(Item item);
 
-    @Update
-    int updateItem(Item item);
+    @Query("UPDATE Item SET isSelected = :selection WHERE id = :itemId")
+    int updateItemSelection(long itemId, boolean selection);
 
     @Query("DELETE FROM Item WHERE id = :itemId")
     int deleteItem(long itemId);

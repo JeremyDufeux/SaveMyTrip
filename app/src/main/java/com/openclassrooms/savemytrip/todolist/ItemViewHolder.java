@@ -3,6 +3,7 @@ package com.openclassrooms.savemytrip.todolist;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,6 +31,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     ImageButton mImageButton;
     @BindView(R.id.activity_todo_list_item_share)
     ImageButton mShareButton;
+    @BindView(R.id.activity_todo_list_item)
+    View mItemView;
 
     private WeakReference<ItemAdapter.Listener> callbackRef;
 
@@ -43,15 +46,18 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         mTextView.setText(item.getText());
         mImageButton.setOnClickListener(this);
         mShareButton.setOnClickListener(this);
+        mItemView.setOnClickListener(v -> {
+            if(callback!=null) callback.onClickItem(getAdapterPosition());
+        });
         switch (item.getCategory()){
             case 0: // To visit
-                mImageView.setBackgroundResource(R.drawable.ic_room_black_24px);
+                mImageView.setImageResource(R.drawable.ic_room_black_24px);
                 break;
             case 1: // Ideas
-                mImageView.setBackgroundResource(R.drawable.ic_lightbulb_outline_black_24px);
+                mImageView.setImageResource(R.drawable.ic_lightbulb_outline_black_24px);
                 break;
             case 2: // Restaurants
-                mImageView.setBackgroundResource(R.drawable.ic_local_cafe_black_24px);
+                mImageView.setImageResource(R.drawable.ic_local_cafe_black_24px);
                 break;
         }
 
