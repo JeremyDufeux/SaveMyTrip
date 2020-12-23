@@ -79,9 +79,8 @@ public class ItemDaoTest {
 
         Item item = LiveDataTestUtil.getValue(database.itemDao().getItems(USER_ID)).get(0);
         assertFalse(item.isSelected());
-        item.setSelected(true);
 
-        database.itemDao().updateItem(item);
+        database.itemDao().updateItemSelection(item.getId(), !item.isSelected());
 
         List<Item> items = LiveDataTestUtil.getValue(database.itemDao().getItems(USER_ID));
 
