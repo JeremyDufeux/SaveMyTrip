@@ -2,15 +2,27 @@ package com.openclassrooms.savemytrip.todolist;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.models.User;
 import com.openclassrooms.savemytrip.repoositoies.ItemDataRepository;
 import com.openclassrooms.savemytrip.repoositoies.UserDataRepository;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.Executor;
+
+import static com.openclassrooms.savemytrip.utils.StorageUtils.setImageInStorage;
 
 public class ItemViewModel extends ViewModel {
 

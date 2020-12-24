@@ -7,6 +7,8 @@ import com.openclassrooms.savemytrip.models.Item;
 
 import java.util.List;
 
+import static com.openclassrooms.savemytrip.utils.StorageUtils.setImageInStorage;
+
 public class ItemDataRepository {
     private final ItemDao itemDao;
 

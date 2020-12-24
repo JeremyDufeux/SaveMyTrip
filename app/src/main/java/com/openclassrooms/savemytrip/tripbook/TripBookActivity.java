@@ -92,7 +92,6 @@ public class TripBookActivity extends BaseActivity {
                        R.id.trip_book_activity_radio_private, R.id.trip_book_activity_radio_public,
                        R.id.trip_book_activity_radio_normal, R.id.trip_book_activity_radio_volatile})
     public void onClickRadioButton(CompoundButton button, boolean isChecked){
-        Log.d("Debug", "onClickRadioButton");
         if (isChecked) {
             switch (button.getId()) {
                 case R.id.trip_book_activity_radio_internal:
@@ -134,7 +133,6 @@ public class TripBookActivity extends BaseActivity {
 
     @AfterPermissionGranted(RC_STORAGE_WRITE_PERMS)
     private void readFromStorage(){
-        Log.d("Debug", "readFromStorage");
         if (!EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             EasyPermissions.requestPermissions(this, getString(R.string.title_permission), RC_STORAGE_WRITE_PERMS, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             return;
@@ -159,7 +157,6 @@ public class TripBookActivity extends BaseActivity {
     }
 
     private void writeOnExternalStorage(){
-        Log.d("Debug", "writeOnExternalStorage");
         if(StorageUtils.isExternalStorageWritable()){
             if(radioButtonExternalPublicChoice.isChecked()){
                 StorageUtils.setTextInStorage(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), this, FILE_NAME, FOLDER_NAME, editText.getText().toString());

@@ -4,11 +4,11 @@ import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,9 +26,14 @@ import com.openclassrooms.savemytrip.injections.Injection;
 import com.openclassrooms.savemytrip.injections.ViewModelFactory;
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.models.User;
-import com.openclassrooms.savemytrip.utils.ItemClickSupport;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,8 +41,13 @@ import butterknife.OnClick;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static android.os.Environment.getExternalStoragePublicDirectory;
+import static com.openclassrooms.savemytrip.utils.StorageUtils.saveFile;
+
 public class TodoListActivity extends BaseActivity implements ItemAdapter.Listener {
     private static final int RC_STORAGE_READ_PERMS = 200;
+    private static final int IMAGE_PICK_CODE = 1000;
+    public static final String AUTHORITY = "com.openclassrooms.savemytrip.fileprovider";
 
     // For data
     private ItemViewModel itemViewModel;
@@ -49,7 +59,7 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     @BindView(R.id.todo_list_activity_recycler_view) RecyclerView recyclerView;
     @BindView(R.id.todo_list_activity_spinner) Spinner spinner;
     @BindView(R.id.todo_list_activity_edit_text) EditText editText;
-    @BindView(R.id.todo_list_activity_load_picture) ImageView loadImage;
+    @BindView(R.id.todo_list_activity_load_picture) ImageView loadImageView;
     @BindView(R.id.todo_list_activity_header_profile_image) ImageView profileImage;
     @BindView(R.id.todo_list_activity_header_profile_text) TextView profileText;
 
@@ -71,16 +81,6 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            pictureUri = data.getData().toString();
-            Glide.with(this).load(pictureUri).apply(RequestOptions.circleCropTransform()).into(loadImage);
-        }
     }
 
     // -------------------
@@ -108,8 +108,7 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     }
 
     @Override
-    public void onClickItem(int position) { // TODO
-        Log.d("Debug", "onClickItem:  : " );
+    public void onClickItem(int position) {
         updateItem(itemAdapter.getItem(position));
     }
 
@@ -120,18 +119,33 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
             return;
         }
 
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, 0);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, IMAGE_PICK_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+
+            Uri uri = data.getData();
+            String fileName = new File(uri.toString()).getName()+".jpg";
+            String folder = getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()+File.separator+"SaveMyTrip";
+            pictureUri = folder+File.separator+fileName;
+            saveFile(this, fileName, uri, folder, fileName);
+            Glide.with(this).load(pictureUri).apply(RequestOptions.circleCropTransform()).into(loadImageView);
+        }
     }
 
     private void sharePicture(Item item) { // TODO
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("image/*");
-
-        File fileToShare = new File(item.getPictureUri());
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(fileToShare));
-        startActivity(Intent.createChooser(sharingIntent, getString(R.string.trip_book_share)));
+        File file = new File(item.getPictureUri());
+        Log.d("Debug", "sharePicture: file.getAbsolutePath() : " + file.getAbsolutePath());
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, item.getPictureUri());
+        shareIntent.setType("image/jpg");
+        startActivity(Intent.createChooser(shareIntent, "Share Image"));
     }
 
     // -------------------
@@ -155,10 +169,11 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     private void createItem(){
         Item item = new Item(editText.getText().toString(), spinner.getSelectedItemPosition(), USER_ID);
         if(pictureUri!=null) {
-            item.setPictureUri(pictureUri.toString());
+            item.setPictureUri(pictureUri);
             pictureUri = null;
         }
-        loadImage.setImageResource(R.drawable.picture);
+
+        loadImageView.setImageResource(R.drawable.picture);
         editText.setText("");
         itemViewModel.createItem(item);
     }

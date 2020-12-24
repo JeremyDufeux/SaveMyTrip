@@ -1,6 +1,7 @@
 package com.openclassrooms.savemytrip.todolist;
 
 import android.graphics.Paint;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.R;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
@@ -64,7 +66,9 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         if(item.getPictureUri()!=null) {
             mPictureView.setVisibility(View.VISIBLE);
             mShareButton.setVisibility(View.VISIBLE);
-            glide.load(item.getPictureUri()).apply(RequestOptions.circleCropTransform()).into(mPictureView);
+            Uri uri = Uri.parse(item.getPictureUri());
+            //mPictureView.setImageURI(uri);
+            glide.load(new File(item.getPictureUri())).apply(RequestOptions.circleCropTransform()).into(mPictureView);
         }
 
         if(item.isSelected()){
