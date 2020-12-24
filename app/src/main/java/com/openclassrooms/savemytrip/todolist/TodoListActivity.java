@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -134,7 +135,7 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
 
     private void createItem(){
 
-        itemViewModel.insertItem(editText.getText().toString(), spinner.getSelectedItemPosition(), USER_ID, (String)loadImageView.getTag());
+        itemViewModel.insertItem(this, editText.getText().toString(), spinner.getSelectedItemPosition(), USER_ID, (String)loadImageView.getTag());
 
         loadImageView.setTag(null);
         loadImageView.setImageResource(R.drawable.picture);
@@ -146,19 +147,12 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     }
 
     private void deleteItem(Item item){
-        this.itemViewModel.deleteItem(item.getId());
+        this.itemViewModel.deleteItem(this, item);
     }
 
     private void getImageFromIntent(Intent data){
         Uri uri = data.getData();
-        String fileName = new File(uri.toString()).getName()+".jpg";
-        File dest = getFilesDir();
-        String absolutePath = dest.toString()+File.separator+FOLDER;
-
-        saveFile(this, fileName, uri, absolutePath, fileName);
-
-        File image = getFileFromStorage(dest,this, fileName, FOLDER);
-        updateImageLoader(image.getAbsolutePath());
+        updateImageLoader(uri.toString());
     }
 
 

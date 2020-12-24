@@ -2,15 +2,22 @@ package com.openclassrooms.savemytrip.todolist;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.models.User;
 import com.openclassrooms.savemytrip.repoositoies.ItemDataRepository;
 import com.openclassrooms.savemytrip.repoositoies.UserDataRepository;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.Executor;
+
+import static com.openclassrooms.savemytrip.utils.StorageUtils.getFileFromStorage;
+import static com.openclassrooms.savemytrip.utils.StorageUtils.saveFile;
 
 public class ItemViewModel extends ViewModel {
     private static final String FOLDER = "item_pictures";
@@ -59,15 +66,33 @@ public class ItemViewModel extends ViewModel {
     public void updateItemSelection(long itemId, boolean selection){
         executor.execute(() -> itemDataSource.updateItemSelection(itemId, selection));
     }
-    public void deleteItem(long userId){
-        executor.execute(() -> itemDataSource.deleteItem(userId));
+    public void deleteItem(Context context, Item item){
+
+        Uri uri = Uri.parse(item.getPictureUri());
+        String fileName = new File(uri.toString()).getName();
+        File dest = context.getFilesDir();
+
+        File image = getFileFromStorage(dest,context, fileName, FOLDER);
+        image.delete();
+
+        executor.execute(() -> itemDataSource.deleteItem(item.getId()));
     }
 
-    public void insertItem(String text, int categoryId, int userId, String pictureUri) {
+    public void insertItem(Context context, String text, int categoryId, int userId, String pictureUri) {
         Item item = new Item(text, categoryId, userId);
 
         if(pictureUri!=null) {
-            item.setPictureUri(pictureUri);
+            Log.d("Debug", "pictureUri!=null");
+
+            Uri uri = Uri.parse(pictureUri);
+            String fileName = new File(uri.toString()).getName()+".jpg";
+            File dest = context.getFilesDir();
+            String absolutePath = dest.toString()+File.separator+FOLDER;
+
+            saveFile(context, fileName, uri, absolutePath, fileName);
+            File image = getFileFromStorage(dest, context, fileName, FOLDER);
+
+            item.setPictureUri(image.getAbsolutePath());
         }
         insertItem(item);
     }
