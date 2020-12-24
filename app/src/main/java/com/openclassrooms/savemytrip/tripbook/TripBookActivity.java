@@ -108,7 +108,6 @@ public class TripBookActivity extends BaseActivity {
     }
 
     private void shareFile() {
-
         File internalFile = StorageUtils.getFileFromStorage(getFilesDir(), this, FILE_NAME, FOLDER_NAME);
         Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), AUTHORITY, internalFile);
 
@@ -116,7 +115,6 @@ public class TripBookActivity extends BaseActivity {
         sharingIntent.setType("text/*");
         sharingIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         startActivity(Intent.createChooser(sharingIntent, getString(R.string.trip_book_share)));
-
     }
 
     private void save(){

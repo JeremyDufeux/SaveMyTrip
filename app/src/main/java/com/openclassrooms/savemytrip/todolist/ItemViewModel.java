@@ -2,29 +2,18 @@ package com.openclassrooms.savemytrip.todolist;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageDecoder;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.openclassrooms.savemytrip.models.Item;
 import com.openclassrooms.savemytrip.models.User;
 import com.openclassrooms.savemytrip.repoositoies.ItemDataRepository;
 import com.openclassrooms.savemytrip.repoositoies.UserDataRepository;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import static com.openclassrooms.savemytrip.utils.StorageUtils.setImageInStorage;
-
 public class ItemViewModel extends ViewModel {
+    private static final String FOLDER = "item_pictures";
 
     // Repositories
     private final ItemDataRepository itemDataSource;
@@ -64,7 +53,7 @@ public class ItemViewModel extends ViewModel {
         return itemDataSource.getItems(userId);
     }
 
-    public void createItem(Item item){
+    public void insertItem(Item item){
         executor.execute(() -> itemDataSource.createItem(item));
     }
     public void updateItemSelection(long itemId, boolean selection){
@@ -74,4 +63,12 @@ public class ItemViewModel extends ViewModel {
         executor.execute(() -> itemDataSource.deleteItem(userId));
     }
 
+    public void insertItem(String text, int categoryId, int userId, String pictureUri) {
+        Item item = new Item(text, categoryId, userId);
+
+        if(pictureUri!=null) {
+            item.setPictureUri(pictureUri);
+        }
+        insertItem(item);
+    }
 }

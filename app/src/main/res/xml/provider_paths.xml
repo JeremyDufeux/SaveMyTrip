@@ -3,19 +3,7 @@
     <files-path
         name="tripBook"
         path="booktrip/"/>
-    <external-path
-        name="external"
-        path="." />
-    <external-files-path
-        name="external_files"
-        path="." />
-    <cache-path
-        name="cache"
-        path="." />
-    <external-cache-path
-        name="external_cache"
-        path="." />
     <files-path
-        name="files"
-        path="." />
+        name="item"
+        path="item_pictures/"/>
 </paths>
