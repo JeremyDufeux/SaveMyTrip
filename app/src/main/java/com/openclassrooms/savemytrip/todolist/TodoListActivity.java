@@ -47,7 +47,6 @@ public class TodoListActivity extends BaseActivity implements ItemAdapter.Listen
     private ItemViewModel itemViewModel;
     private ItemAdapter itemAdapter;
     private static int USER_ID = 1;
-    private String pictureUri = null;
 
     // FOR DESIGN
     @BindView(R.id.todo_list_activity_recycler_view) RecyclerView recyclerView;
